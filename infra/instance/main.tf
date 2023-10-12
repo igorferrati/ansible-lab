@@ -9,7 +9,7 @@ terraform {
 
 locals {
   vms = {
-    vm-worldpress = {
+    vm-wordpress = {
       machine_type = var.instance_type
       instance_zone    = var.instance_zone01
     }
