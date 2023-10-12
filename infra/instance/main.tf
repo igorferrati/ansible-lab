@@ -67,7 +67,6 @@ resource "google_compute_instance" "vm-ubuntu" {
 
     }
   }
-
 }
 
 output "external_ips" {
