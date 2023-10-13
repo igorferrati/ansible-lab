@@ -1,1 +1,43 @@
 ---
+- hosts: all
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 
+      become: yes
+
+    - name: 'Install requeriments'
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        name: " {{ item }}"
+        state: latest
+      become: yes
+      with_items:
+        - php7.4
+        - apache2
+        - libapache2-mod-php7.4
+        - php7.4-gd
+        - php-ssh2
+        - libmcrypt-dev
+        - mysql-server-8.0
+        - python3-mysqldb
+        - php7.4-mysql
+
+    - name: 'MySQL DB'
+      mysql_db:
+        name: wordpress_db
+        login_user: root
+        state: present
+      become: yes
+
+    - name: 'MySQL user'
+      mysql_user:
+        login_user: root
+        name: wordpress_user
+        password: 12345
+        priv: 'wordpress_db.*:ALL'
+        state: present
+      become: yes
