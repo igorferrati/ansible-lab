@@ -13,10 +13,10 @@ locals {
       machine_type = var.instance_type
       instance_zone    = var.instance_zone01
     }
-    # vm-02 = {
-    #   machine_type = var.instance_type
-    #   instance_zone    = var.instance_zone02
-    # }
+    mysql = {
+      machine_type = var.instance_type
+      instance_zone    = var.instance_zone02
+    }
     # vm-03 = {
     #   machine_type = var.instance_type
     #   instance_zone    = var.instance_zone03

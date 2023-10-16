@@ -1,5 +1,62 @@
 ---
-- hosts: all
+- hosts: database
+  handlers:
+    - name: restart mysql
+      service:
+        name: mysql
+        state: restarted
+      become: yes
+
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        upgrade: yes
+        update_cache: yes
+        cache_valid_time: 86400 
+      become: yes
+  
+    - name: 'Install requeriments'
+      apt:
+        update_cache: yes
+        cache_valid_time: 3600
+        name: " {{ item }}"
+        state: latest
+      become: yes
+      with_items:
+        - mysql-server-8.0
+        - python3-mysqldb
+
+    - name: 'MySQL DB'
+      mysql_db:
+        name: wordpress_db
+        login_user: root
+        state: present
+      become: yes
+
+    - name: 'MySQL user'
+      mysql_user:
+        login_user: root
+        name: wordpress_user
+        password: 12345
+        priv: 'wordpress_db.*:ALL'
+        state: present
+        host: "{{ item }}"
+      with_items:
+        - 'localhost'
+        - '127.0.0.1'
+        - '104.198.134.181'
+        - '10.128.0.17'
+      become: yes
+
+    - name: 'Copy my.cnf'
+      copy:
+        src: 'files/my.cnf'
+        dest: '/etc/mysql/my.cnf'
+      become: yes
+      notify:
+        - restart mysql
+
+- hosts: wordpress
   handlers:
     - name: restart apache
       service:
@@ -29,25 +86,7 @@
         - php7.4-gd
         - php-ssh2
         - libmcrypt-dev
-        - mysql-server-8.0
-        - python3-mysqldb
         - php7.4-mysql
-
-    - name: 'MySQL DB'
-      mysql_db:
-        name: wordpress_db
-        login_user: root
-        state: present
-      become: yes
-
-    - name: 'MySQL user'
-      mysql_user:
-        login_user: root
-        name: wordpress_user
-        password: 12345
-        priv: 'wordpress_db.*:ALL'
-        state: present
-      become: yes
 
     - name: 'Download wordpress'
       get_url:
@@ -77,6 +116,7 @@
         - { regex: 'database_name_here', value: 'wordpress_db'}
         - { regex: 'username_here', value: 'wordpress_user'}
         - { regex: 'password_here', value: '12345'}
+        - { regex: 'localhost', value: '34.27.160.162'}
       become: yes
       
     - name: 'Set up apache2 to wordpress'

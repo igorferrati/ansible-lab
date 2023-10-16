@@ -14,9 +14,9 @@ variable "instance_zone01" {
   type = string
 }
 
-# variable "instance_zone02" {
-#   type = string
-# }
+variable "instance_zone02" {
+  type = string
+}
 
 # variable "instance_zone03" {
 #   type = string
