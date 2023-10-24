@@ -1,0 +1,6 @@
+---
+wp_db_name: wordrepress_db
+wp_user_name: wordpress_user
+wp_user_password: 12345
+wp_installations_dir: '/var/www/wordpress'
+
