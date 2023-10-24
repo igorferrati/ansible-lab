@@ -1,0 +1,23 @@
+---
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400 
+  become: yes
+
+- name: 'Install requeriments'
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name: " {{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - php7.4
+    - apache2
+    - libapache2-mod-php7.4
+    - php7.4-gd
+    - php-ssh2
+    - libmcrypt-dev
+    - php7.4-mysql

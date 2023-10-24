@@ -1,0 +1,45 @@
+---
+- name: Update and upgrade apt packages
+  apt:
+    upgrade: yes
+    update_cache: yes
+    cache_valid_time: 86400 
+  become: yes
+
+- name: 'Install requeriments'
+  apt:
+    update_cache: yes
+    cache_valid_time: 3600
+    name: " {{ item }}"
+    state: latest
+  become: yes
+  with_items:
+    - mysql-server-8.0
+    - python3-mysqldb
+
+- name: 'MySQL DB'
+  mysql_db:
+    name: "{{ wp_db_name }}"
+    login_user: root
+    state: present
+  become: yes
+
+- name: 'MySQL user'
+  mysql_user:
+    login_user: root
+    name: "{{ wp_user_name }}"
+    password: "{{ wp_user_password }}"
+    priv: "{{ wp_db_name }}.*:ALL"
+    state: present
+    host: "{{ item }}"
+  with_items:
+    - "{{ wp_host_ip }}"
+  become: yes
+
+- name: 'Copy my.cnf'
+  copy:
+    src: 'files/my.cnf'
+    dest: '/etc/mysql/my.cnf'
+  become: yes
+  notify:
+    - restart mysql
