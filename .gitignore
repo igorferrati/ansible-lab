@@ -7,8 +7,8 @@
 *.tfstate.*
 
 ### keys ###
-*.pem
-key.json
-ansible_ed25519*
+# *.pem
+# key.json
+# ansible_ed25519*
 .vscode
-keys
+# keys
